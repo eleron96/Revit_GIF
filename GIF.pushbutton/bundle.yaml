@@ -1,0 +1,14 @@
+title:
+  fr_fr: GIF
+  en_us: GIF
+tooltip: 
+  fr_fr: >-
+    Color Splasher permet de colorer les éléments de la vue active en fonction de leurs valeurs de paramètre. Il permet également la création d'une légende ou d'une liste de filtres de vue.
+
+  en_us: >-
+    Color Splasher allows you to color the elements of the active view according to their parameter values. It also allows the creation of a legend or a list of view filters.
+
+    
+author:
+engine:
+  persistent: true

@@ -1,0 +1,215 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Family Parameter Animator"
+        Height="850" Width="600"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+  <Grid Margin="10">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="150" Name="consoleRow"/>
+    </Grid.RowDefinitions>
+
+    <!-- 1. Family + parameter selection -->
+    <StackPanel Grid.Row="0" Margin="0,0,0,10">
+      <TextBlock Text="Family (instances):"/>
+      <ComboBox Name="familyBox" Height="24" SelectionChanged="OnFamilyChanged"/>
+      <CheckBox Name="instanceBox" Content="Instance parameters"
+                Margin="0,6,0,0" Checked="OnInstanceToggle" Unchecked="OnInstanceToggle"/>
+      <TextBlock Text="Available parameters (numeric):" Margin="0,8,0,0"/>
+      <ComboBox Name="paramComboBox" Height="24" Margin="0,4,0,0"/>
+      <Button Name="addParamBtn" Content="Add parameter" Width="120" 
+              Margin="0,4,0,0" Click="OnAddParameter"/>
+    </StackPanel>
+
+    <!-- 2. Selected parameters with settings -->
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+      <StackPanel>
+        <TextBlock Text="Selected parameters:" FontWeight="Bold" Margin="0,8,0,4"/>
+        <TextBlock Text="Set range for each parameter:" FontSize="10" Foreground="Gray"/>
+        
+        <!-- Dynamic parameter list -->
+        <ItemsControl Name="paramSettingsList" Margin="0,8,0,0">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border BorderBrush="LightGray" BorderThickness="1" Margin="0,4" Padding="8">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                  </Grid.ColumnDefinitions>
+                  <StackPanel Grid.Column="0">
+                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                    <Grid Margin="0,4,0,0">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                      </Grid.ColumnDefinitions>
+                      <StackPanel Grid.Column="0" Margin="0,0,4,0">
+                        <TextBlock Text="Min value:" FontSize="10"/>
+                        <TextBox Text="{Binding MinValue}" Height="20"/>
+                      </StackPanel>
+                      <StackPanel Grid.Column="1" Margin="4,0,0,0">
+                        <TextBlock Text="Max value:" FontSize="10"/>
+                        <TextBox Text="{Binding MaxValue}" Height="20"/>
+                      </StackPanel>
+                    </Grid>
+                  </StackPanel>
+                  <Button Grid.Column="1" Content="Remove" Width="60" Height="20" 
+                          Margin="8,0,0,0" Click="OnRemoveParameter" Tag="{Binding}"/>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        
+        <!-- Separator -->
+        <Separator Margin="0,16,0,8"/>
+        
+        <!-- General settings -->
+        <TextBlock Text="General settings:" FontWeight="Bold" Margin="0,8,0,4"/>
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+          <RadioButton Name="manualFramesRadio" Content="Manual frames" IsChecked="True" Checked="OnFramesModeChanged"/>
+          <RadioButton Name="durationFpsRadio" Content="By duration and FPS" Margin="16,0,0,0" Checked="OnFramesModeChanged"/>
+        </StackPanel>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0" Margin="0,0,4,0">
+            <TextBlock Text="Frames:" FontSize="10"/>
+            <TextBox Name="framesBox" Height="20" Text="10"/>
+          </StackPanel>
+          <StackPanel Grid.Column="1" Margin="4,0,0,0">
+            <TextBlock Text="Duration (sec):" FontSize="10"/>
+            <TextBox Name="durationBox" Height="20" Text="5"/>
+          </StackPanel>
+          <StackPanel Grid.Column="2" Margin="4,0,0,0">
+            <TextBlock Text="FPS:" FontSize="10"/>
+            <TextBox Name="fpsBox" Height="20" Text="5"/>
+          </StackPanel>
+        </Grid>
+        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+          <TextBlock Text="Output folder:" FontSize="10" VerticalAlignment="Center"/>
+          <TextBox Name="folderBox" Height="20" Width="400" Margin="4,0,0,0"/>
+          <Button Name="browseBtn" Content="Browse..." Width="60" Margin="4,0,0,0" Click="OnBrowse"/>
+        </StackPanel>
+        
+        <!-- Separator -->
+        <Separator Margin="0,16,0,8"/>
+        
+        <!-- Export settings -->
+        <TextBlock Text="Export settings:" FontWeight="Bold" Margin="0,8,0,4"/>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0" Margin="0,0,4,0">
+            <TextBlock Text="Resolution DPI:" FontSize="10"/>
+            <ComboBox Name="dpiComboBox" Height="20" SelectedIndex="2">
+              <ComboBoxItem Content="72 DPI"/>
+              <ComboBoxItem Content="150 DPI"/>
+              <ComboBoxItem Content="300 DPI"/>
+              <ComboBoxItem Content="600 DPI"/>
+              <ComboBoxItem Content="1200 DPI (simulated)"/>
+            </ComboBox>
+          </StackPanel>
+          <StackPanel Grid.Column="1" Margin="4,0,0,0">
+            <TextBlock Text="Pixel size:" FontSize="10"/>
+            <ComboBox Name="pixelSizeComboBox" Height="20" SelectedIndex="1">
+              <ComboBoxItem Content="1024"/>
+              <ComboBoxItem Content="2048"/>
+              <ComboBoxItem Content="4096"/>
+              <ComboBoxItem Content="8192"/>
+            </ComboBox>
+          </StackPanel>
+        </Grid>
+        
+        <!-- Scale settings -->
+        <TextBlock Text="Scale settings:" FontWeight="Bold" Margin="0,16,0,4"/>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0" Margin="0,0,4,0">
+            <TextBlock Text="Scale factor:" FontSize="10"/>
+            <ComboBox Name="scaleComboBox" Height="20" SelectedIndex="2">
+              <ComboBoxItem Content="0.25x (25%)"/>
+              <ComboBoxItem Content="0.5x (50%)"/>
+              <ComboBoxItem Content="1.0x (100%)"/>
+              <ComboBoxItem Content="1.5x (150%)"/>
+              <ComboBoxItem Content="2.0x (200%)"/>
+              <ComboBoxItem Content="4.0x (400%)"/>
+            </ComboBox>
+          </StackPanel>
+          <StackPanel Grid.Column="1" Margin="4,0,0,0">
+            <TextBlock Text="Custom scale:" FontSize="10"/>
+            <TextBox Name="customScaleBox" Height="20" Text="1.0" ToolTip="Enter custom scale factor (e.g., 0.75, 1.25)"/>
+          </StackPanel>
+        </Grid>
+        
+        <!-- Separator -->
+        <Separator Margin="0,16,0,8"/>
+        
+        <!-- GIF settings -->
+        <TextBlock Text="GIF settings:" FontWeight="Bold" Margin="0,8,0,4"/>
+        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+          <CheckBox Name="createGifCheckBox" Content="Create GIF after rendering" Height="24" Width="220" Margin="0,0,16,0" Checked="OnCreateGifCheckChanged" Unchecked="OnCreateGifCheckChanged"/>
+          <CheckBox Name="loopGifCheckBox" Content="Loop GIF infinitely (Netscape extension)" Height="24" Width="260" IsEnabled="False"/>
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- 3. Buttons and log settings -->
+    <StackPanel Grid.Row="2" Margin="0,12,0,0">
+      <!-- Log settings and buttons -->
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+        <CheckBox Name="showLogsBox" Content="Show logs" IsChecked="True" Margin="0,0,16,0" VerticalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+          <Button Name="cancelBtn" Content="Cancel" Width="80" Click="OnCancel" Margin="0,0,8,0"/>
+          <Button Name="startBtn" Content="Start" Width="80" Click="OnProceed"/>
+        </StackPanel>
+      </StackPanel>
+    </StackPanel>
+    
+    <!-- Progress bar -->
+    <ProgressBar Name="progressBar"
+                 Grid.Row="3"
+                 Height="16"
+                 Minimum="0"
+                 Maximum="100"
+                 Value="0"
+                 Margin="0,8,0,0"
+                 Visibility="Collapsed"/>
+
+
+
+    <!-- 4. Console -->
+    <Border Grid.Row="4" Name="consoleBorder" 
+            BorderBrush="LightGray" BorderThickness="1" 
+            Background="Black" Visibility="Visible" Margin="0,8,0,0">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!-- Log area -->
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" 
+                      HorizontalScrollBarVisibility="Auto" Margin="0">
+          <TextBox Name="consoleBox" 
+                   Background="Black" Foreground="LightGreen" 
+                   FontFamily="Consolas" FontSize="12"
+                   IsReadOnly="True" TextWrapping="Wrap"
+                   BorderThickness="0"
+                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        </ScrollViewer>
+      </Grid>
+    </Border>
+  </Grid>
+</Window>
